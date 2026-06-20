@@ -1,0 +1,44 @@
+Two Friends Firebase Setup
+
+1. Firebase Authentication
+   - Open Firebase Console.
+   - Go to Authentication > Sign-in method.
+   - Enable Email/Password.
+   - Go to Authentication > Users.
+   - Add this admin user:
+     Email: arpitasingh170504@gmail.com
+     Password: use the password you chose for the admin.
+
+2. Firestore Database
+   - Go to Firestore Database.
+   - Create a database if it is not created yet.
+   - Collections used by the website:
+     bookings
+     siteProfile
+
+3. Suggested Firestore Rules
+   These rules allow public booking requests, but only the admin email can read or manage bookings and profile.
+
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       function isAdmin() {
+         return request.auth != null
+           && request.auth.token.email == "arpitasingh170504@gmail.com";
+       }
+
+       match /bookings/{bookingId} {
+         allow create: if true;
+         allow read, update, delete: if isAdmin();
+       }
+
+       match /siteProfile/{profileId} {
+         allow read: if true;
+         allow write: if isAdmin();
+       }
+     }
+   }
+
+4. Files
+   - Public website: index.html
+   - Admin portal: admin.html
